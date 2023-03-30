@@ -27,7 +27,7 @@
 |HAProxy| + | + | + |
 |Kong Gateway| + | + | + |
 |||||
-| **Cloud-based API (proprietary and open-source)** ||||
+| **Cloud-based API** ||||
 |AWS API Gateway| + | + | + |
 |Azure API Gateway| + | + | + |
 |Oracle API Gateway| + | + | + |
