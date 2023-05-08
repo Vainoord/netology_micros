@@ -117,7 +117,7 @@ Request Body:
 
 ### Ответ
 
-Созданы Pod netology-web:
+Созданы Pod `netology-web` и Service `netology-svc`:
 <details>
 <summary>Pod and service details</summary>
 <table>
