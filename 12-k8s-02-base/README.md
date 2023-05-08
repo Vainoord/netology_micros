@@ -162,6 +162,12 @@ spec:
 </td>
 </tr>
 </table>
+
+```shell
+ubuntu@ubuntu-mk8s:~$ microk8s kubectl port-forward svc/netology-svc 18080:8080 --address="0.0.0.0"
+Forwarding from 0.0.0.0:18080 -> 8080
+
+```
 </details>
 
 \
