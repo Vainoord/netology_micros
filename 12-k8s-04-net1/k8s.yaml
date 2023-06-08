@@ -1,0 +1,88 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"netology-task"},"name":"homework-deployment","namespace":"ns-homework"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"netology-task"}},"template":{"metadata":{"labels":{"app":"netology-task"}},"spec":{"containers":[{"image":"nginx:1.23.4","name":"nginx","ports":[{"containerPort":80}]},{"env":[{"name":"HTTP_PORT","value":"1180"},{"name":"HTTPS_PORT","value":"11443"}],"image":"wbitt/network-multitool","name":"multitool","ports":[{"containerPort":1180},{"containerPort":11443}]}]}}}}
+    creationTimestamp: "2023-06-04T20:44:49Z"
+    generation: 1
+    labels:
+      app: netology-task
+    name: homework-deployment
+    namespace: ns-homework
+    resourceVersion: "232835"
+    uid: 7a5c713a-69dd-408b-9561-2774aad4a3f0
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 3
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: netology-task
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: netology-task
+      spec:
+        containers:
+        - image: nginx:1.23.4
+          imagePullPolicy: IfNotPresent
+          name: nginx
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - env:
+          - name: HTTP_PORT
+            value: "1180"
+          - name: HTTPS_PORT
+            value: "11443"
+          image: wbitt/network-multitool
+          imagePullPolicy: Always
+          name: multitool
+          ports:
+          - containerPort: 1180
+            protocol: TCP
+          - containerPort: 11443
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 3
+    conditions:
+    - lastTransitionTime: "2023-06-04T20:44:49Z"
+      lastUpdateTime: "2023-06-04T20:44:55Z"
+      message: ReplicaSet "homework-deployment-5fff569859" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2023-06-08T09:42:45Z"
+      lastUpdateTime: "2023-06-08T09:42:45Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 3
+    replicas: 3
+    updatedReplicas: 3
+kind: List
+metadata:
+  resourceVersion: ""

@@ -305,6 +305,12 @@ Commercial support is available at
 
 </details>
 
+--- 
+
+### Manifest yaml:
+
+[k8s manifest](k8s.yaml)
+
 ------
 
 ### Правила приёма работы
