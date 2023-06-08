@@ -11,4 +11,6 @@
 ### [01 - K8s intro](12-k8s-01-intro/)
 ### [02 - K8s base](12-k8s-02-base/)
 ### [03 - K8s apps](12-k8s-03-apps/)
+### [04 - K8s net1](12-k8s-04-net1/)
+
 ---
