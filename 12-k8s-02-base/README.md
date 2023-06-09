@@ -118,6 +118,7 @@ Request Body:
 ### Ответ
 
 Созданы Pod `netology-web` и Service `netology-svc`:
+
 <details>
 <summary>Pod and service details</summary>
 <table>
@@ -168,6 +169,7 @@ ubuntu@ubuntu-mk8s:~$ microk8s kubectl port-forward svc/netology-svc 18080:8080 
 Forwarding from 0.0.0.0:18080 -> 8080
 
 ```
+
 </details>
 
 \
