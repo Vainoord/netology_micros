@@ -165,22 +165,74 @@ spec:
 </details>
 
 \
-Применяем манифесты, проверяем статус Deployments и Services:
+Применяем манифесты, проверяем статус Deployments, Services и Pods:
 
 ```shell
 vainoord@vnrd-mypc task5 $ kubectl get deployments
 NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-deployment-front   3/3     3            3           3m29s
-deployment-back    1/1     1            1           3m3s
+deployment-front   3/3     3            3           28h
+deployment-back    1/1     1            1           28h
 
 vainoord@vnrd-mypc task5 $ kubectl get services
 NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
-svc-dev-front   ClusterIP   10.152.183.173   <none>        80/TCP     3m48s
-svc-dev-back    ClusterIP   10.152.183.102   <none>        80/TCP     3m22s
+svc-dev-front   ClusterIP   10.152.183.173   <none>        80/TCP     28h
+svc-dev-back    ClusterIP   10.152.183.102   <none>        80/TCP     28h
+
+vainoord@vnrd-mypc task5 $ kubectl get pods
+NAME                               READY   STATUS    RESTARTS      AGE
+deployment-front-c6f77ffdd-98mk5   1/1     Running   2 (11m ago)   28h
+deployment-front-c6f77ffdd-jz448   1/1     Running   2 (11m ago)   28h
+deployment-front-c6f77ffdd-64gd6   1/1     Running   2 (11m ago)   28h
+deployment-back-7f78d4cb8f-6qgm7   1/1     Running   2 (11m ago)   28h
 ```
 
+Проверяем доступность Services из Pods (возьмем Pod `deployment-front-c6f77ffdd-98mk5` из front service и Pod `deployment-back-7f78d4cb8f-6qgm7` из back service):
+
 <details>
-<summary>Checking apps accessibility</summary>
+<summary>Checking apps accessibility from Pods</summary>
+
+```shell
+vainoord@vnrd-mypc ~ $ kubectl exec -i -t deployment-front-c6f77ffdd-98mk5 -- /bin/bash
+
+root@deployment-front-c6f77ffdd-98mk5:/# curl http://svc-dev-back:80 
+WBITT Network MultiTool (with NGINX) - deployment-back-7f78d4cb8f-6qgm7 - 10.1.128.216 - HTTP: 80 , HTTPS: 443 . (Formerly praqma/network-multitool)
+```
+
+```shell
+vainoord@vnrd-mypc ~ $ kubectl exec -i -t deployment-back-7f78d4cb8f-6qgm7 -- /bin/bash
+
+bash-5.1# curl http://svc-dev-front:80
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+</details>
+
+\
+Проверка доступности Services из VM:
+
+<details>
+<summary>Checking apps accessibility from VM</summary>
 
 ```shell
 ubuntu@ubuntu-mk8s:~$ curl http://svc-dev-front:80
@@ -251,7 +303,7 @@ addons:
 
 </details>
 
-Создадим Ingress manifest:
+Создадим Ingress manifest. При этом добавим аннотации `use-regex` и `rewrite-target`, поскольку для backend нужно выполнить перенаправление вызова.
 
 <details>
 <summary>Ingress http yaml</summary>
@@ -261,6 +313,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingr-app-dev
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
     - host: myapp.dev.local
@@ -273,13 +328,13 @@ spec:
                 name: svc-dev-front
                 port:
                   number: 80
-          - path: /api
+          - path: /api(/|$)(.*)
             pathType: Prefix
             backend:
               service:
                 name: svc-dev-back
                 port:
-                  number: 80
+                  number: 80  
 ```
 
 </details>
@@ -335,7 +390,6 @@ ff02::2 ip6-allrouters
 127.0.0.1 myapp.dev.local
 ```
 
-
 \
 Проверяем доступ до frontend:
 
@@ -379,30 +433,10 @@ Commercial support is available at
 
 ```shell
 ubuntu@ubuntu-mk8s:~$ curl http://myapp.dev.local/api
-<html>
-<head><title>404 Not Found</title></head>
-<body>
-<center><h1>404 Not Found</h1></center>
-<hr><center>nginx/1.20.2</center>
-</body>
-</html>
+WBITT Network MultiTool (with NGINX) - deployment-back-7f78d4cb8f-6qgm7 - 10.1.128.215 - HTTP: 80 , HTTPS: 443 . (Formerly praqma/network-multitool)
 ```
 
 Получен ответ от nginx, который установлен в контейнере multitool.
-
-```shell
-vainoord@vnrd-mypc task5 $ kubectl get pods
-NAME                               READY   STATUS    RESTARTS      AGE
-deployment-front-c6f77ffdd-98mk5   1/1     Running   1 (47m ago)   28h
-deployment-front-c6f77ffdd-jz448   1/1     Running   1 (47m ago)   28h
-deployment-front-c6f77ffdd-64gd6   1/1     Running   1 (47m ago)   28h
-deployment-back-7f78d4cb8f-6qgm7   1/1     Running   1             28h
-
-vainoord@vnrd-mypc task5 $ kubectl exec -t -i deployment-back-7f78d4cb8f-6qgm7 -- /bin/bash
-
-bash-5.1# nginx -v
-nginx version: nginx/1.20.2
-```
 
 </details>
 
