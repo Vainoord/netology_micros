@@ -215,7 +215,7 @@ spec:
 </details>
 
 \
-Затем посмотрим доступность `syslog` из пода.
+Затем посмотрим доступность `syslog` из пода. В Pod log-reader-t5zpm должна быть примонтирована директория  `/var/log/`:
 
 ```shel
 vainoord@vnrd-mypc ~ $ kubectl get pods
