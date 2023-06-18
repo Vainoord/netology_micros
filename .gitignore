@@ -1,0 +1,2 @@
+# ignore infrastructure folder in tasks subfolders
+*/infrastructure
