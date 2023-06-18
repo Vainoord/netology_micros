@@ -347,7 +347,7 @@ Ingress добавлен:
 ```shell
 vainoord@vnrd-mypc task5 $ kubectl get ingress                  
 NAME           CLASS    HOSTS             ADDRESS     PORTS   AGE
-ingr-app-dev   public   myapp.dev.local   127.0.0.1   80      7m29s
+ingr-app-dev   public   myapp.dev.local   127.0.0.1   80      114m
 
 vainoord@vnrd-mypc task5 $ kubectl describe ingress
 Name:             ingr-app-dev
@@ -360,9 +360,10 @@ Rules:
   Host             Path  Backends
   ----             ----  --------
   myapp.dev.local  
-                   /      svc-dev-front:80 (10.1.128.194:80,10.1.128.206:80,10.1.128.209:80)
-                   /api   svc-dev-back:80 (10.1.128.193:80)
-Annotations:       <none>
+                   /               svc-dev-front:80 (10.1.128.219:80,10.1.128.236:80,10.1.128.237:80)
+                   /api(/|$)(.*)   svc-dev-back:80 (10.1.128.234:80)
+Annotations:       nginx.ingress.kubernetes.io/rewrite-target: /$2
+                   nginx.ingress.kubernetes.io/use-regex: true
 Events:            <none>
 ```
 
@@ -391,7 +392,7 @@ ff02::2 ip6-allrouters
 ```
 
 \
-Проверяем доступ до frontend:
+Проверяем доступ из VM до frontend:
 
 <details>
 <summary>Check http://myapp.dev.local/ host</summary>
@@ -426,7 +427,7 @@ Commercial support is available at
 </details>
 
 \
-Теперь проверяем доступ до backend:
+Теперь проверяем доступ из VM до backend:
 
 <details>
 <summary>Check http://myapp.dev.local/api </summary>
