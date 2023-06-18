@@ -13,5 +13,6 @@
 ### [03 - K8s apps](12-k8s-03-apps/)
 ### [04 - K8s net1](12-k8s-04-net1/)
 ### [05 - K8s net2](12-k8s-05-net2/)
+### [06 - K8s storage1](12-k8s-06-storage1/)
 
 ---
