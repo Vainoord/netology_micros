@@ -16,5 +16,6 @@
 ### [06 - K8s storage1](12-k8s-06-storage1/)
 ### [07 - K8s storage2](12-k8s-07-storage2/)
 ### [08 - K8s appconfig](12-k8s-08-appconfig/)
+### [09 - K8s components](13-k8s-01-components/)
 
 ---
