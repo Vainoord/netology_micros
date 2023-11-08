@@ -31,6 +31,7 @@
 В качестве базы возьмем ноды из предыдущего задания без модуля flannel. Установку calico производим по инструкции: https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart
 
 Используем следущий набор команд на masternode:
+
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/tigera-operator.yaml
 wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/custom-resources.yaml
@@ -39,10 +40,13 @@ wget https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/cu
 В файле `custom-resources.yaml` меняем значение `cidr` на 10.244.0.0/16, т.к. kubeadm инициировали с `--pod-network-cidr 10.244.0.0/16`.
 
 Далее:
+
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.3/manifests/custom-resources.yaml
 ```
+
 В итоге получаем:
+
 ```bash
 ubuntu@node-control:~$ kubectl get pods -n calico-system
 NAME                                       READY   STATUS    RESTARTS       AGE
@@ -59,39 +63,14 @@ csi-node-driver-t8kt6                      2/2     Running   0              2m49
 csi-node-driver-zbcvx                      2/2     Running   0              2m49s
 
 ubuntu@node-control:~$ kubectl get nodes -o wide
-NAME           STATUS   ROLES           AGE     VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
-node-01        Ready    <none>          8m15s   v1.28.2   192.168.55.20   <none>        Ubuntu 22.04.3 LTS   5.15.0-88-generic   containerd://1.7.2
-node-02        Ready    <none>          7m5s    v1.28.2   192.168.55.10   <none>        Ubuntu 22.04.3 LTS   5.15.0-88-generic   containerd://1.7.2
-node-03        Ready    <none>          6m3s    v1.28.2   192.168.55.34   <none>        Ubuntu 22.04.3 LTS   5.15.0-88-generic   containerd://1.7.2
-node-control   Ready    control-plane   11m     v1.28.2   192.168.55.21   <none>        Ubuntu 22.04.3 LTS   5.15.0-88-generic   containerd://1.7.2
-
+The connection to the server 192.168.55.21:6443 was refused - did you specify the right host or port?
 ```
- 
+
+<u>В последующем с каждой командой kubectl получаем ответ "The connection to the server 192.168.55.21:6443 was refused - did you specify the right host or port?".
+</u>
+
 ### Правила приёма работы
 
 1. Домашняя работа оформляется в своём Git-репозитории в файле README.md. Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
 2. Файл README.md должен содержать скриншоты вывода необходимых команд, а также скриншоты результатов.
 3. Репозиторий должен содержать тексты манифестов или ссылки на них в файле README.md.
-
-
-
-Your Kubernetes control-plane has initialized successfully!
-
-To start using your cluster, you need to run the following as a regular user:
-
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
-Alternatively, if you are the root user, you can run:
-
-  export KUBECONFIG=/etc/kubernetes/admin.conf
-
-You should now deploy a pod network to the cluster.
-Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
-  https://kubernetes.io/docs/concepts/cluster-administration/addons/
-
-Then you can join any number of worker nodes by running the following on each as root:
-
-sudo kubeadm join 192.168.55.21:6443 --token 6dwvui.kdkjark1udnnhnb1 \
-	--discovery-token-ca-cert-hash sha256:5c01413870d12e3746aa873c45296c08e42f82c6b7d8fbae87d0b428103925d7 
