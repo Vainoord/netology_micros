@@ -32,10 +32,9 @@
 <details>
 <summary>Setting up nodes</summary>
 
-Отключаем swap, проверяем порт 6443:
+Отключаем swap (на VM в yandex cloud swap раздел по умолчанию не подключается), проверяем, что порт 6443 незаблокирован:
 ```bash
 sudo swapoff -a
-
 nc 127.0.0.1 6443
 ```
 Устанавливаем curl, ca-certificates, apt-transport-https:
@@ -111,10 +110,11 @@ Then you can join any number of worker nodes by running the following on each as
 
 kubeadm join 192.168.150.3:6443 --token <generated_token> --discovery-token-ca-cert-hash <cert_hash>
 ```
-
 </details>
 
-Необходимо убедиться, что порт на VM открыт:
+С командой из сообщения выше будем подключать (`kubeadm join ...`) worker ноды к master ноде.
+
+После предварительных настроек необходимо убедиться, что `kube-apis` сервир работает и слушает порт:
 
 ```bash
 sudo lsof -i -P -n | grep LISTEN
