@@ -75,18 +75,62 @@ netology-deployment-cache      1/1     1            1           20s   multitool 
 netology-deployment-frontend   1/1     1            1           17s   multitool    wbitt/network-multitool   app=app-front
 
 ubuntu@vm-masternode:~/deployment$ kubectl get services -n app -o wide
-NAME                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE   SELECTOR
-frontend-service        ClusterIP   10.102.249.144   <none>        80/TCP     50s   app=app-front
-netology-service-back   ClusterIP   10.109.14.52     <none>        8080/TCP   58s   app=app-back
-netology-svc-cache      ClusterIP   10.98.68.235     <none>        8090/TCP   53s   app=app-cache
+NAME           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+svc-backend    ClusterIP   10.107.86.231   <none>        80/TCP    8d    app=app-back
+svc-cache      ClusterIP   10.101.26.247   <none>        80/TCP    8d    app=app-cache
+svc-frontend   ClusterIP   10.102.159.87   <none>        80/TCP    8d    app=app-front
 
 ubuntu@vm-masternode:~/deployment$ kubectl get pods -n app -o wide
-NAME                                            READY   STATUS    RESTARTS   AGE   IP               NODE        NOMINATED NODE   READINESS GATES
-netology-deployment-backend-66cf76d8b-269bk     1/1     Running   0          80s   10.244.187.133   vm-node02   <none>           <none>
-netology-deployment-cache-57478cb969-p84q9      1/1     Running   0          75s   10.244.188.68    vm-node01   <none>           <none>
-netology-deployment-frontend-5489899c8b-bwmnx   1/1     Running   0          72s   10.244.187.134   vm-node02   <none>           <none>
+NAME                                           READY   STATUS    RESTARTS       AGE   IP               NODE        NOMINATED NODE   READINESS GATES
+netology-deployment-backend-77555dd6cd-kfcvd   1/1     Running   3 (105m ago)   8d    10.244.183.82    vm-node03   <none>           <none>
+netology-deployment-cache-58bf459b7-dqgd2      1/1     Running   3 (104m ago)   8d    10.244.188.75    vm-node01   <none>           <none>
+netology-deployment-frontend-d9d8b8478-pcd54   1/1     Running   3 (105m ago)   8d    10.244.187.145   vm-node02   <none>           <none>
 ```
 
+Проверим, что из подов видны все сервисы. Применим политику [allow-all-ingress](assets/np-allowall.yaml) и проверим доступность сервисов:
+
+```bash
+ubuntu@vm-masternode:~/deployment$ kubectl get networkpolicy -A
+NAMESPACE          NAME                POD-SELECTOR     AGE
+app                allow-all-ingress   <none>           34m
+calico-apiserver   allow-apiserver     apiserver=true   16d
+```
+
+```bash
+ubuntu@vm-masternode:~/deployment$ kubectl exec -it -n app netology-deployment-cache-58bf459b7-dqgd2 -- curl 10.101.26.247:80
+WBITT Network MultiTool (with NGINX) - netology-deployment-cache-58bf459b7-dqgd2 - 10.244.188.75 - HTTP: 80 , HTTPS: 443 . (Formerly praqma/network-multitool)
+
+ubuntu@vm-masternode:~/deployment$ kubectl exec -it -n app netology-deployment-cache-58bf459b7-dqgd2 -- curl 10.102.159.87:80
+curl: (28) Failed to connect to 10.102.159.87 port 80 after 129406 ms: Couldn't connect to server
+command terminated with exit code 28
+
+ubuntu@vm-masternode:~/deployment$ kubectl exec -it -n app netology-deployment-cache-58bf459b7-dqgd2 -- curl 10.102.86.231:80
+curl: (28) Failed to connect to 10.102.86.231 port 80 after 129513 ms: Couldn't connect to server
+command terminated with exit code 28
+```
+
+Видим, что под может подключиться к своему сервису, но не имеет доступа к другим сервисам. Тажке не работает curl с DNS именем сервисов:
+
+```bash
+ubuntu@vm-masternode:~/deployment$ kubectl exec -it -n app netology-deployment-cache-58bf459b7-dqgd2 -- curl svc-cache
+curl: (6) Could not resolve host: svc-cache
+command terminated with exit code 6
+
+ubuntu@vm-masternode:~/deployment$ kubectl exec -it -n app netology-deployment-cache-58bf459b7-dqgd2 -- curl svc-frontend
+curl: (6) Could not resolve host: svc-frontend
+command terminated with exit code 6
+
+ubuntu@vm-masternode:~/deployment$ kubectl exec -it -n app netology-deployment-cache-58bf459b7-dqgd2 -- curl svc-backend
+curl: (6) Could not resolve host: svc-backend
+command terminated with exit code 6
+```
+
+Конфиг [coredns](assets/coredns.yaml) прилагаю.
+
+---
+
+<details>
+<summary> network policies block</summary>
 Теперь создаем сетевые политики для наших приложений. Создаем политику [deny-all](assets/np-denyall.yaml) и отдельные политики доступа к подам для [frontend](assets/np-frontend.yaml), [backend](assets/np-backend.yaml) и [cache](assets/np-cache.yaml).
 
 ```bash
@@ -94,15 +138,10 @@ netology-deployment-frontend-5489899c8b-bwmnx   1/1     Running   0          72s
 ubuntu@vm-masternode:~/deployment$ kubectl get networkpolicy -n app -o wide
 NAME                  POD-SELECTOR    AGE
 np-backend            app=app-back    13m
-np-backend-to-cache   app=app-cache   13m
+np-cache              app=app-cache   13m
 np-deny-all           <none>          13m
 np-frontend           app=app-front   13m
 
 ```
 
-```bash
-ubuntu@vm-masternode:~/deployment$ kubectl exec -it netology-deployment-frontend-5489899c8b-bwmnx -n app -c multitool -- /bin/bash
-```
-
-sudo kubeadm join 192.168.55.13:6443 --token 5z2srv.vuqsdaq5dk2uj6jo \
---discovery-token-ca-cert-hash sha256:5b47de47c90ecc55e1c699fb7a1e4ab5e9d636e639ec4aa9066e55edf8d7fdb5
+</details>

@@ -1,0 +1,35 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        log
+        errors
+        health {
+           lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+           pods insecure
+           fallthrough in-addr.arpa ip6.arpa
+           ttl 30
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+           max_concurrent 1000
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2024-01-09T11:00:24Z"
+  name: coredns
+  namespace: kube-system
+  resourceVersion: "155056"
+  uid: c100e70c-5f41-4ad2-a315-6bf0b6eac065
