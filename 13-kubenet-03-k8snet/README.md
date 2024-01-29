@@ -43,9 +43,15 @@ wget https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/ti
 wget https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
 ```
 
-В файле `custom-resources.yaml` меняем значение `cidr` на `10.244.0.0/16`, т.к. kubeadm инициировали с `--pod-network-cidr 10.244.0.0/16`.
+В файле `custom-resources.yaml` меняем значение `cidr` на `10.244.0.0/16`, т.к. kubeadm инициировали с `--pod-network-cidr 10.244.0.0/16`:
 
-Применяем :
+```bash
+sudo kubeadm init \
+--apiserver-advertise-address=192.168.55.13 \
+--pod-network-cidr 10.244.0.0/16 \
+```
+
+Применяем calico манифесты:
 
 ```bash
 kubectl create -f tigera-operator.yaml
