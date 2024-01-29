@@ -61,12 +61,19 @@ kubectl create -f custom-resources.yaml
 В итоге получаем:
 
 ```bash
-ubuntu@vm-masternode:~$ kubectl get pods -n calico-system
-NAME                                       READY   STATUS    RESTARTS   AGE
-calico-kube-controllers-74fd6ff86b-ppknt   1/1     Running   0          5m42s
-calico-node-hq7gb                          1/1     Running   0          5m42s
-calico-typha-784b8b8f68-j4l7p              1/1     Running   0          5m42s
-csi-node-driver-fgx24                      2/2     Running   0          5m42s
+ubuntu@vm-masternode:~$ kubectl get pods -o wide -n calico-system
+NAME                                       READY   STATUS    RESTARTS       AGE   IP               NODE            NOMINATED NODE   READINESS GATES
+calico-kube-controllers-74fd6ff86b-ppknt   1/1     Running   9 (38m ago)    19d   10.244.118.183   vm-masternode   <none>           <none>
+calico-node-b7f7l                          1/1     Running   9 (38m ago)    19d   192.168.55.22    vm-node03       <none>           <none>
+calico-node-hq7gb                          1/1     Running   9 (38m ago)    19d   192.168.55.13    vm-masternode   <none>           <none>
+calico-node-kzplm                          1/1     Running   9 (38m ago)    19d   192.168.55.25    vm-node02       <none>           <none>
+calico-node-t2p28                          1/1     Running   9 (39m ago)    19d   192.168.55.5     vm-node01       <none>           <none>
+calico-typha-784b8b8f68-j4l7p              1/1     Running   9 (38m ago)    19d   192.168.55.13    vm-masternode   <none>           <none>
+calico-typha-784b8b8f68-tgkfn              1/1     Running   9 (39m ago)    19d   192.168.55.5     vm-node01       <none>           <none>
+csi-node-driver-6vc6c                      2/2     Running   18 (38m ago)   19d   10.244.183.89    vm-node03       <none>           <none>
+csi-node-driver-dmvtk                      2/2     Running   18 (39m ago)   19d   10.244.188.82    vm-node01       <none>           <none>
+csi-node-driver-fgx24                      2/2     Running   18 (38m ago)   19d   10.244.118.188   vm-masternode   <none>           <none>
+csi-node-driver-m9v95                      2/2     Running   18 (38m ago)   19d   10.244.187.151   vm-node02       <none>           <none>
 
 ```
 
