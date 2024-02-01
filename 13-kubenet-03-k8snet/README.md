@@ -179,7 +179,7 @@ np-frontend           app=app-front   13m
 Проверяем доступность сервисов:
 
 <details>
-<summary> Checking pods after network policies</summary>
+<summary> Checking pods after applying network policies</summary>
 Frontend:
 
 ```bash
