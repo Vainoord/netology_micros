@@ -18,4 +18,7 @@
 ### [08 - K8s appconfig](12-k8s-08-appconfig/)
 ### [09 - K8s components](13-k8s-01-components/)
 ### [10 - K8s installation](13-k8s-02-k8sinstall/)
+### [11 - K8s network](13-k8s-03-k8net/)
+### [12 - K8s update](13-k8s-04-update/)
+
 ---
