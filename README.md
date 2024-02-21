@@ -20,5 +20,6 @@
 ### [10 - K8s installation](13-k8s-02-k8sinstall/)
 ### [11 - K8s network](13-k8s-03-k8net/)
 ### [12 - K8s update](13-k8s-04-update/)
+### [13 - K8s troubleshooting](13-k8s-05-troubleshooting/)
 
 ---
