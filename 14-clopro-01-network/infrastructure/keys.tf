@@ -14,14 +14,6 @@ resource "tls_private_key" "vm_ssh_key" {
   algorithm = "ED25519"
 }
 
-# creating id_rsa file for ssh connection to private instance
-# https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file
-# resource "local_sensitive_file" "id_rsa" {
-#   filename = "ssh_key"
-#   file_permission = "0600"
-#   content = tls_private_key.vm_ssh_key.private_key_pem
-# }
-
 # ssh public key for private instance
 data "template_file" "cloud_config_private" {
   template = file("metadata.tpl")
