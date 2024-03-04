@@ -1,2 +1,5 @@
-# ignore infrastructure folder in tasks subfolders
-*/infrastructure
+# hide providers and tfstate files
+*/infrastructure/.terraform*
+*/infrastructure/*.tfstate*
+# hide cloud credentials
+*/infrastructure/*.tfvars

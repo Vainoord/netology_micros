@@ -22,4 +22,8 @@
 ### [12 - K8s update](13-k8s-04-update/)
 ### [13 - K8s troubleshooting](13-k8s-05-troubleshooting/)
 
+## Cloud providers
+
+### [01 - Organisation of the network](14-clopro-01-network/)
+
 ---
